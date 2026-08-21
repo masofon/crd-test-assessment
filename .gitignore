@@ -1,0 +1,4 @@
+results/
+test_runs/
+.local/
+.DS_Store
