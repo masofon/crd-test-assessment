@@ -3,8 +3,9 @@ name: assess
 description:
   Score one anonymized component file against the component's rubric,
   writing a report to the given results file.
-arguments: [component, component-file, figma-url, results-file]
-argument-hint: <component> <component-file> <figma-url> <results-file>
+arguments: [component, component-file, results-file]
+argument-hint: <component> <component-file> <results-file>
+allowed-tools: [Read, Glob, Grep, Write, Edit, Bash]
 ---
 
 Score the component implementation at `$component-file` against
@@ -13,20 +14,26 @@ origin — score only what is in its project.
 
 ## Ground truth
 
-Read `rubric/$component.md` and `crd/$component.md`, then the Figma
-component at the `$figma-url` (`get_design_context`, `get_variable_defs`,
-and `get_screenshot`) before scoring anything.
+`rubric/$component.md` is self-contained: it inlines every expected token
+name, property name, value set and default. Read it, then read the
+candidate's own `src/tokens.css` to resolve what each token the candidate
+used actually evaluates to. `crd/$component.md` is background only; where
+it and the rubric disagree, the rubric wins.
 
 ## Scoring
 
-1. Mechanical checks: run `npm install` then `npm run build` in the
-   project containing `$component-file` (the nearest ancestor directory
-   with a `package.json`).
-2. Score the judged criteria per the rubric, comparing the component code
-   to the Figma reads and the requirements.
-3. Write `$results-file`, creating its parent directory: mechanical
-   outcomes, each judged score with its justification. Keep each score
-   justification to a single sentence. Follow `assessment-template.md`
-   in this skill directory — same sections, same order, same score
-   format — replacing every `{placeholder}` and dropping the template's
-   instructional prose.
+1. Run `npm install` then `npm run build` in the project containing
+   `$component-file` (the nearest ancestor directory with a
+   `package.json`). This is **reported, not scored** — the rubric awards
+   no points for it — but a failed build is context for every item below.
+2. Check the rubric's disqualifying check: whether `src/tokens.css` was
+   modified or its custom properties redefined elsewhere. Report it; do
+   not score it.
+3. Score the judged criteria per the rubric, comparing the component code
+   to the expected values inlined there.
+4. Write `$results-file`, creating its parent directory: mechanical
+   outcomes, the disqualifying check, and each judged score with its
+   justification. Keep each justification to a single sentence. Follow
+   `assessment-template.md` in this skill directory — same sections, same
+   order, same score format — replacing every `{placeholder}` and dropping
+   the template's instructional prose.

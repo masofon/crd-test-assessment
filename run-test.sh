@@ -165,16 +165,17 @@ build() { # $1 candidate name, $2 "with" | "without"
   fi
 }
 
-# The assessor is deliberately unrestricted: it has to read this repo's
-# rubric and both candidates.
+# The assessor reads this repo's rubric and both candidates, but gets no
+# MCP servers and no network: the rubric is self-contained, so a live
+# design read would be a second variable alongside the CRD.
 assess() { # $1 candidate name
   local dir
   dir="$(dir_for "$1")"
   log "assess $1: start"
   (cd "$ASSESS_REPO" && \
     claude --model "$CLAUDE_CODE_MODEL" --effort "$CLAUDE_CODE_EFFORT" \
-      -p "/assess $COMPONENT $dir/src/Component.tsx $FIGMA_URL $RESULTS/$1/assessment.md" \
-      --dangerously-skip-permissions --mcp-config .mcp.json)
+      -p "/assess $COMPONENT $dir/src/Component.tsx $RESULTS/$1/assessment.md" \
+      --dangerously-skip-permissions)
   log "assess $1: done"
 }
 
