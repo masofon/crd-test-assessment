@@ -144,8 +144,9 @@ build() { # $1 candidate name, $2 "with" | "without"
   rm -rf "$dir/.claude/skills/import-variables"
   local prompt="/build-component $FIGMA_URL"
   if [[ "$2" == "with" ]]; then
-    cp "$CRD" "$dir/requirements.md"
-    prompt="$prompt requirements.md"
+    mkdir -p "$dir/crd"
+    cp "$CRD" "$dir/crd/$COMPONENT.md"
+    prompt="$prompt crd/$COMPONENT.md"
   fi
   (cd "$dir" && mise trust --quiet && mise install --quiet && mise x -- npm ci --silent)
   log "prep $1: done"

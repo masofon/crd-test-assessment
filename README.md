@@ -28,13 +28,13 @@ The steps it automates:
 1. Clone a fresh copy of `crd-test-builder` into a temp directory outside this
    repo, one per arm.
 2. For the with-CRD arm only, copy `crd/<component>.md` from here into the
-   clone as `requirements.md`.
+   clone's own `crd/` directory.
 3. In the clone, run a fresh Claude session with the same prompt every
    trial:
 
    ```
-   claude -p "/build-component <figma-url>"                    # without CRD
-   claude -p "/build-component <figma-url> requirements.md"    # with CRD
+   claude -p "/build-component <figma-url>"                     # without CRD
+   claude -p "/build-component <figma-url> crd/<component>.md"  # with CRD
    ```
 
 4. Check that build's transcript for any sign it reached for this repo, and

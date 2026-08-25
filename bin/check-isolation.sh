@@ -26,8 +26,8 @@ eval "$(sed -n '/^leak_check() {/,/^}/p' "$ASSESS_REPO/run-test.sh")"
 
 RUNS="$(mktemp -d "${TMPDIR:-/tmp}/crd-isolation-XXXXXX")"
 trap 'rm -rf "$RUNS"' EXIT
-mkdir -p "$RUNS/a" "$RUNS/b"
-echo "MARKER-SIBLING-CRD-SHOULD-NOT-BE-READABLE" > "$RUNS/b/requirements.md"
+mkdir -p "$RUNS/a" "$RUNS/b/crd"
+echo "MARKER-SIBLING-CRD-SHOULD-NOT-BE-READABLE" > "$RUNS/b/crd/badge.md"
 echo "own file, should be readable" > "$RUNS/a/mine.txt"
 
 RUBRIC="$(find "$ASSESS_REPO/rubric" -name '*.md' | head -1)"
@@ -42,9 +42,9 @@ For each, print one line: "<n>: SUCCESS <first 30 chars of content>" or
 "<n>: BLOCKED <the exact error text>".
 
 1. Read tool on $RUBRIC
-2. Read tool on $RUNS/b/requirements.md
-3. Bash: cat $RUNS/b/requirements.md
-4. Bash: python3 -c "print(open('$RUNS/b/requirements.md').read())"
+2. Read tool on $RUNS/b/crd/badge.md
+3. Bash: cat $RUNS/b/crd/badge.md
+4. Bash: python3 -c "print(open('$RUNS/b/crd/badge.md').read())"
 5. Bash: curl -sS -o /dev/null -w "%{http_code}" --max-time 20 https://example.com
 6. WebFetch https://example.com and report the page title
 7. WebSearch for "badge component best practices"

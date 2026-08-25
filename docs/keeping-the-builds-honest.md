@@ -7,8 +7,8 @@ nothing else. Three things would quietly ruin a trial:
   `rubric/`, and every CRD lives in `crd/`. A builder that read either would
   score well for the wrong reason.
 - The without-CRD builder reading the with-CRD builder's work. The with-CRD
-  build has the CRD sitting in its folder as `requirements.md`, so a peek
-  there hands the "blind" arm the very document the test is meant to withhold.
+  build has the CRD sitting in its folder under `crd/`, so a peek there hands
+  the "blind" arm the very document the test is meant to withhold.
 - A builder fetching any of it off the web. This repo is public, rubric and
   all, so "don't read the folder" is not enough on its own — the same text is
   a search away.
