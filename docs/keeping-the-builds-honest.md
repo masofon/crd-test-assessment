@@ -7,8 +7,8 @@ nothing else. Three things would quietly ruin a trial:
   `rubric/`, and every CRD lives in `crd/`. A builder that read either would
   score well for the wrong reason.
 - The without-CRD builder reading the with-CRD builder's work. The with-CRD
-  build has the CRD sitting in its folder under `crd/`, so a peek there hands
-  the "blind" arm the very document the test is meant to withhold.
+  clone has the CRDs sitting in its folder under `crd/`, so a peek there
+  hands the "blind" arm the very documents the test is meant to withhold.
 - A builder fetching any of it off the web. This repo is public, rubric and
   all, so "don't read the folder" is not enough on its own — the same text is
   a search away.
@@ -30,14 +30,29 @@ folder it shouldn't. So we put the walls somewhere the flag can't reach.
 ## Three walls
 
 **1. The builds happen outside this repo.** Each trial creates a fresh
-temporary folder — something like `/var/folders/…/crd-test-badge-…/` — with
-one build in `a/` and the other in `b/`. Nothing about a build's surroundings
-hints that this repo exists. This isn't a lock in itself, but it removes the
+temporary folder — something like `/var/folders/…/crd-test-trial-…/` — with
+one *arm* in `a/` and the other in `b/`. One folder per arm, not per build:
+every component in that arm is built into the same folder, in sequence, each
+in a fresh session with no memory of the last but on a disk that carries the
+previous components on purpose. Nothing about a build's surroundings hints
+that this repo exists. This isn't a lock in itself, but it removes the
 accidental routes: a listing of the folder above, a search that spreads
 wider than intended, or Claude Code picking up instruction files from parent
 folders. The candidates are moved back into `test_runs/` at the very end,
-after both builds and both assessments have finished, so nothing is in reach
+after every build and every assessment has finished, so nothing is in reach
 while it could still matter.
+
+### What a build may see inside its own folder
+
+Later builds see earlier ones, deliberately. A real component is written into
+a repo that already has components in it, and both arms get that identically.
+
+The asymmetry is the CRDs. The with-CRD clone accumulates `crd/<name>.md` as
+it goes, so the fourth build can read the first three CRDs — intentional,
+since that arm's premise is that the builder has the CRDs. Each one arrives
+immediately before its own build, so no build sees a CRD for work it has
+not been asked to do yet. The without-CRD clone has no `crd/` directory
+at any point.
 
 **2. An operating-system lock (the "sandbox").** For each build, the script
 tells the operating system: this session may not read this repo, and may not
@@ -101,7 +116,10 @@ crd-test-assessment
 ```
 
 If it finds it, the trial stops there and nothing is assessed. A spoiled build
-must never be given a score.
+must never be given a score — and a trial is one experiment, so a single hit
+voids the entire trial, both arms and every build in it, not just the build
+that reached. The arms are only comparable if both were built under the same
+conditions.
 
 One string is enough because that name is in every route to the rubric.
 Fetched from the web it arrives as `github.com/…/crd-test-assessment/…`,
@@ -145,11 +163,27 @@ was handed a path inside this repo, so a working check has to spot the name in
 its transcript. No Figma access or component build is involved, so the whole
 thing takes about a minute.
 
+The settings blob and the leak check live in `bin/isolation.sh`, which the
+trial and the check both `source`. So the check exercises the same code a
+trial runs rather than a copy of it that can drift.
+
 ## What is deliberately not locked down
 
-The assessor. It runs as its own separate session, after the builds are
-finished, and it has to read the rubric and both candidates to do its job. It
-never writes to a candidate, and no builder is running at the same time.
+The assessor. There is one assessor session per candidate per component, each
+pointed at one component file and one rubric, and they all run after every
+build in both arms has finished. An assessor has to read the rubric and the
+candidate to do its job. It never writes to a candidate, and no builder is
+running at the same time.
 
-The assessor is also never told which arm was which — that mapping is written
-to `arms.txt` only after both assessments are complete.
+The assessor is never told which arm was which — that mapping is written to
+`arms.txt` only after every assessment is complete. To keep it that way,
+`crd/` is moved out of the with-CRD clone for the duration of the assessments
+and put back afterwards; otherwise the directory, and the clone's own
+`git status`, would name the arm outright.
+
+One residual leak has no fix worth having: a with-CRD build may cite
+requirement IDs in its own code comments. The candidate in
+`test_runs/badge-20260821-175156/candidate-a/src/Component.tsx` opens with
+`(CRD: Badge)` and cites `(S1)`, `(A1)`, `(F3)`. Rewriting a candidate's
+comments would change the very thing being scored, so this is documented
+rather than papered over.
