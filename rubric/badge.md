@@ -1,7 +1,8 @@
 # Rubric: Badge
 
-Scores one candidate implementation of Badge (`src/Component.tsx` plus what
-it imports).
+Scores one candidate implementation of Badge (`src/components/badge.tsx` plus
+what it imports). The project holds other components too; they are out of
+scope, as is `src/components/badge.preview.tsx`, which is demo scaffolding.
 
 This rubric is **self-contained**: every expected token name, property
 name, value set and default is inlined below, taken from the Figma

@@ -3,7 +3,7 @@
 ## Mechanical (reported, not scored)
 
 - `npm install`: {succeeded | failed} ({one-line detail — e.g. "up to date, 0 vulnerabilities" or the error}).
-- `npm run build` (`{build command}`): {succeeded | failed} ({one-line detail — e.g. "no errors" or the first error}).
+- `npm run build` (`{build command}`): {succeeded | failed} ({one-line detail — e.g. "no errors" or the first error}){, failing in {this component or its imports | elsewhere in the project — {where}} if it failed}.
 - `src/tokens.css` consumed unmodified: {yes | NO — {what was changed or redefined, and where}}.
 
 ## Item scores
