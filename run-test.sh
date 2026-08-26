@@ -208,6 +208,7 @@ assess_one() { # $1 candidate name, $2 component
   log "assess $1 $2: done"
 }
 
+log "=== Claude Code: model=$CLAUDE_CODE_MODEL effort=$CLAUDE_CODE_EFFORT ==="
 log "run start: ${#COMPONENTS[@]} components, build dir $RUNS, CRD arm $WITH_CRD"
 
 prepare_clone candidate-a
