@@ -243,6 +243,7 @@ rmdir "$HIDDEN_CRDS" 2>/dev/null || true
 # The reports never name the arms, so this file is the only durable record of
 # the mapping. Written only once every assessment has finished.
 printf '%s: with CRD\n%s: without CRD\n' "$WITH_CRD" "$WITHOUT_CRD" > "$KEEP/arms.txt"
+cp "$KEEP/arms.txt" "$RESULTS/arms.txt"
 rmdir "$RUNS"
 log "run done"
 
